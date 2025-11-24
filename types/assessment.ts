@@ -2,8 +2,7 @@
 export interface DealDetails {
   clientName: string;
   dealName: string;
-  dealValue?: string;
-  expectedCloseDate?: string;
+  email: string;
   salesStage?: string;
   dealContext?: string;
 }

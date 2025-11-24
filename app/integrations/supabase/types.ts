@@ -67,6 +67,7 @@ export interface Database {
           updated_at: string | null
           client_name: string
           deal_name: string
+          email: string | null
           deal_value: number | null
           expected_close_date: string | null
           sales_stage: string | null
@@ -83,6 +84,7 @@ export interface Database {
           updated_at?: string | null
           client_name: string
           deal_name: string
+          email?: string | null
           deal_value?: number | null
           expected_close_date?: string | null
           sales_stage?: string | null
@@ -99,6 +101,7 @@ export interface Database {
           updated_at?: string | null
           client_name?: string
           deal_name?: string
+          email?: string | null
           deal_value?: number | null
           expected_close_date?: string | null
           sales_stage?: string | null
@@ -133,6 +136,14 @@ export interface Database {
           control_score: number | null
           rtw_score: number | null
           ai_insights: string | null
+          credibility_knowledge_response: string | null
+          credibility_trust_response: string | null
+          capability_competence_response: string | null
+          capability_quantum_response: string | null
+          commitment_outcome_response: string | null
+          commitment_satisfaction_response: string | null
+          control_mastery_response: string | null
+          control_influence_response: string | null
         }
         Insert: {
           id?: string
@@ -156,6 +167,14 @@ export interface Database {
           control_score?: number | null
           rtw_score?: number | null
           ai_insights?: string | null
+          credibility_knowledge_response?: string | null
+          credibility_trust_response?: string | null
+          capability_competence_response?: string | null
+          capability_quantum_response?: string | null
+          commitment_outcome_response?: string | null
+          commitment_satisfaction_response?: string | null
+          control_mastery_response?: string | null
+          control_influence_response?: string | null
         }
         Update: {
           id?: string
@@ -179,6 +198,14 @@ export interface Database {
           control_score?: number | null
           rtw_score?: number | null
           ai_insights?: string | null
+          credibility_knowledge_response?: string | null
+          credibility_trust_response?: string | null
+          capability_competence_response?: string | null
+          capability_quantum_response?: string | null
+          commitment_outcome_response?: string | null
+          commitment_satisfaction_response?: string | null
+          control_mastery_response?: string | null
+          control_influence_response?: string | null
         }
       }
     }

@@ -11,6 +11,7 @@ export default function ResultsScreen() {
   const { scores, dealDetails, answers, resetAssessment } = useAssessment();
   const { generateInsights, loading: insightsLoading } = useRTWInsights();
   const [savingToDB, setSavingToDB] = useState(false);
+  const [sendingEmail, setSendingEmail] = useState(false);
 
   if (!scores) {
     return (
@@ -49,6 +50,11 @@ export default function ResultsScreen() {
       // Save to database
       await saveAssessmentToDB(insights);
 
+      console.log('Sending results via email...');
+
+      // Send email with results
+      await sendResultsEmail(insights);
+
       // Navigate to insights screen
       router.push({
         pathname: '/insights',
@@ -75,8 +81,7 @@ export default function ResultsScreen() {
         .insert({
           client_name: dealDetails.clientName,
           deal_name: dealDetails.dealName,
-          deal_value: dealDetails.dealValue ? parseFloat(dealDetails.dealValue.replace(/[^0-9.-]+/g, '')) : null,
-          expected_close_date: dealDetails.expectedCloseDate || null,
+          email: dealDetails.email,
           sales_stage: dealDetails.salesStage || null,
           deal_context: dealDetails.dealContext || null,
           credibility_score: scores.credibility,
@@ -143,6 +148,47 @@ export default function ResultsScreen() {
     }
   };
 
+  const sendResultsEmail = async (aiInsights: string) => {
+    setSendingEmail(true);
+    try {
+      console.log('Sending RTW results email...');
+
+      const { data, error } = await supabase.functions.invoke('send-rtw-results-email', {
+        body: {
+          dealDetails,
+          scores,
+          aiInsights,
+        },
+      });
+
+      if (error) {
+        console.error('Error sending email:', error);
+        Alert.alert(
+          'Email Error',
+          'Results were saved but email could not be sent. Please contact support.',
+          [{ text: 'OK' }]
+        );
+        return;
+      }
+
+      console.log('Email sent successfully to:', data.recipients);
+      Alert.alert(
+        'Success',
+        `Results have been emailed to ${dealDetails.email} and Sven@ImpactWon.com`,
+        [{ text: 'OK' }]
+      );
+    } catch (error) {
+      console.error('Error in sendResultsEmail:', error);
+      Alert.alert(
+        'Email Error',
+        'Results were saved but email could not be sent. Please contact support.',
+        [{ text: 'OK' }]
+      );
+    } finally {
+      setSendingEmail(false);
+    }
+  };
+
   const handleStartNew = () => {
     resetAssessment();
     router.push('/(tabs)/(home)/');
@@ -160,7 +206,7 @@ export default function ResultsScreen() {
     return 'Needs Attention';
   };
 
-  const isLoading = insightsLoading || savingToDB;
+  const isLoading = insightsLoading || savingToDB || sendingEmail;
 
   return (
     <View style={commonStyles.container}>
@@ -284,7 +330,7 @@ export default function ResultsScreen() {
         <View style={styles.actionContainer}>
           <Text style={styles.actionTitle}>Get AI-Powered Insights</Text>
           <Text style={styles.actionDescription}>
-            Generate personalised recommendations based on your assessment using OpenAI&apos;s advanced AI.
+            Generate personalised recommendations and email results to {dealDetails.email} and Sven@ImpactWon.com
           </Text>
           
           <TouchableOpacity
@@ -296,11 +342,11 @@ export default function ResultsScreen() {
               <View style={styles.loadingContainer}>
                 <ActivityIndicator color={colors.textLight} />
                 <Text style={[buttonStyles.primaryButtonText, styles.loadingText]}>
-                  {savingToDB ? 'Saving...' : 'Generating...'}
+                  {sendingEmail ? 'Sending Email...' : savingToDB ? 'Saving...' : 'Generating...'}
                 </Text>
               </View>
             ) : (
-              <Text style={buttonStyles.primaryButtonText}>🤖 Generate AI Insights</Text>
+              <Text style={buttonStyles.primaryButtonText}>🤖 Generate AI Insights & Email</Text>
             )}
           </TouchableOpacity>
 

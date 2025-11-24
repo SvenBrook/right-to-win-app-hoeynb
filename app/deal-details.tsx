@@ -1,21 +1,13 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Platform } from 'react-native';
 import { router } from 'expo-router';
 import { commonStyles, colors, buttonStyles } from '@/styles/commonStyles';
 import { useAssessment } from '@/contexts/AssessmentContext';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
 
 export default function DealDetailsScreen() {
   const { dealDetails, setDealDetails } = useAssessment();
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [tempDate, setTempDate] = useState<Date>(() => {
-    if (dealDetails.expectedCloseDate) {
-      return new Date(dealDetails.expectedCloseDate);
-    }
-    return new Date();
-  });
 
   const salesStages = [
     'Prospecting',
@@ -26,51 +18,23 @@ export default function DealDetailsScreen() {
     'Closing',
   ];
 
-  useEffect(() => {
-    if (dealDetails.expectedCloseDate) {
-      setTempDate(new Date(dealDetails.expectedCloseDate));
-    }
-  }, [dealDetails.expectedCloseDate]);
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
 
   const handleNext = () => {
-    if (!dealDetails.clientName || !dealDetails.dealName) {
-      alert('Please fill in at least the client name and deal name');
+    if (!dealDetails.clientName || !dealDetails.dealName || !dealDetails.email) {
+      alert('Please fill in the client name, deal name, and email address');
       return;
     }
+
+    if (!validateEmail(dealDetails.email)) {
+      alert('Please enter a valid email address');
+      return;
+    }
+
     router.push('/assessment/credibility');
-  };
-
-  const handleDateChange = (event: any, selectedDate?: Date) => {
-    if (Platform.OS === 'android') {
-      setShowDatePicker(false);
-    }
-    
-    if (event.type === 'dismissed') {
-      setShowDatePicker(false);
-      return;
-    }
-    
-    if (selectedDate) {
-      setTempDate(selectedDate);
-      setDealDetails({
-        ...dealDetails,
-        expectedCloseDate: selectedDate.toISOString().split('T')[0],
-      });
-      
-      if (Platform.OS === 'ios') {
-        setShowDatePicker(false);
-      }
-    }
-  };
-
-  const formatDate = (dateString: string) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-    });
   };
 
   return (
@@ -103,35 +67,17 @@ export default function DealDetailsScreen() {
             placeholderTextColor={colors.border}
           />
 
-          <Text style={commonStyles.label}>Deal Value (Optional)</Text>
+          <Text style={commonStyles.label}>Email Address *</Text>
           <TextInput
             style={commonStyles.input}
-            value={dealDetails.dealValue}
-            onChangeText={(text) => setDealDetails({ ...dealDetails, dealValue: text })}
-            placeholder="e.g., £500,000"
+            value={dealDetails.email}
+            onChangeText={(text) => setDealDetails({ ...dealDetails, email: text })}
+            placeholder="Enter email address"
             placeholderTextColor={colors.border}
-            keyboardType="numeric"
+            keyboardType="email-address"
+            autoCapitalize="none"
+            autoCorrect={false}
           />
-
-          <Text style={commonStyles.label}>Expected Close Date (Optional)</Text>
-          <TouchableOpacity
-            style={[commonStyles.input, styles.dateButton]}
-            onPress={() => setShowDatePicker(true)}
-          >
-            <Text style={dealDetails.expectedCloseDate ? styles.dateText : styles.datePlaceholder}>
-              {dealDetails.expectedCloseDate ? formatDate(dealDetails.expectedCloseDate) : 'Select date'}
-            </Text>
-          </TouchableOpacity>
-
-          {showDatePicker && (
-            <DateTimePicker
-              value={tempDate}
-              mode="date"
-              display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-              onChange={handleDateChange}
-              minimumDate={new Date()}
-            />
-          )}
 
           <Text style={commonStyles.label}>Sales Stage (Optional)</Text>
           <View style={[commonStyles.input, styles.pickerContainer]}>
@@ -185,17 +131,6 @@ const styles = StyleSheet.create({
     width: '100%',
     maxWidth: 600,
     alignSelf: 'center',
-  },
-  dateButton: {
-    justifyContent: 'center',
-  },
-  dateText: {
-    color: colors.text,
-    fontSize: 16,
-  },
-  datePlaceholder: {
-    color: colors.border,
-    fontSize: 16,
   },
   pickerContainer: {
     padding: 0,

@@ -49,8 +49,7 @@ export function AssessmentProvider({ children }: { children: ReactNode }) {
   const [dealDetails, setDealDetails] = useState<DealDetails>({
     clientName: '',
     dealName: '',
-    dealValue: '',
-    expectedCloseDate: '',
+    email: '',
     salesStage: '',
     dealContext: '',
   });
@@ -62,8 +61,7 @@ export function AssessmentProvider({ children }: { children: ReactNode }) {
     setDealDetails({
       clientName: '',
       dealName: '',
-      dealValue: '',
-      expectedCloseDate: '',
+      email: '',
       salesStage: '',
       dealContext: '',
     });
