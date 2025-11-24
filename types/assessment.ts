@@ -12,22 +12,30 @@ export interface AssessmentAnswers {
   credibility: {
     gateQuestion: boolean;
     knowledge: number;
+    knowledgeResponse?: string;
     trust: number;
+    trustResponse?: string;
   };
   capability: {
     gateQuestion: boolean;
     competence: number;
+    competenceResponse?: string;
     quantum: number;
+    quantumResponse?: string;
   };
   commitment: {
     gateQuestion: boolean;
     outcome: number;
+    outcomeResponse?: string;
     satisfaction: number;
+    satisfactionResponse?: string;
   };
   control: {
     gateQuestion: boolean;
     mastery: number;
+    masteryResponse?: string;
     influence: number;
+    influenceResponse?: string;
   };
 }
 

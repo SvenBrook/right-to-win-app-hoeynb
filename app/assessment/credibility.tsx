@@ -10,7 +10,9 @@ export default function CredibilityScreen() {
   const { answers, setAnswers } = useAssessment();
   const [gateQuestion, setGateQuestion] = useState(answers.credibility.gateQuestion);
   const [knowledge, setKnowledge] = useState(answers.credibility.knowledge);
+  const [knowledgeResponse, setKnowledgeResponse] = useState(answers.credibility.knowledgeResponse || '');
   const [trust, setTrust] = useState(answers.credibility.trust);
+  const [trustResponse, setTrustResponse] = useState(answers.credibility.trustResponse || '');
 
   const handleNext = () => {
     setAnswers({
@@ -18,7 +20,9 @@ export default function CredibilityScreen() {
       credibility: {
         gateQuestion,
         knowledge,
+        knowledgeResponse,
         trust,
+        trustResponse,
       },
     });
     router.push('/assessment/capability');
@@ -85,12 +89,16 @@ export default function CredibilityScreen() {
             question="Knowledge: How well do I understand the client's strategic imperatives, industry issues, and CEO agenda?"
             value={knowledge}
             onValueChange={setKnowledge}
+            textResponse={knowledgeResponse}
+            onTextResponseChange={setKnowledgeResponse}
           />
 
           <AssessmentQuestion
             question="Trust: Can I prove delivery performance, reliability, and satisfaction to build trust?"
             value={trust}
             onValueChange={setTrust}
+            textResponse={trustResponse}
+            onTextResponseChange={setTrustResponse}
           />
 
           <View style={styles.navigationButtons}>

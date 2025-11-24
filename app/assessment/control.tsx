@@ -12,7 +12,9 @@ export default function ControlScreen() {
   const { answers, setAnswers, dealDetails, setScores } = useAssessment();
   const [gateQuestion, setGateQuestion] = useState(answers.control.gateQuestion);
   const [mastery, setMastery] = useState(answers.control.mastery);
+  const [masteryResponse, setMasteryResponse] = useState(answers.control.masteryResponse || '');
   const [influence, setInfluence] = useState(answers.control.influence);
+  const [influenceResponse, setInfluenceResponse] = useState(answers.control.influenceResponse || '');
   const [loading, setLoading] = useState(false);
 
   const handleComplete = async () => {
@@ -23,7 +25,9 @@ export default function ControlScreen() {
       control: {
         gateQuestion,
         mastery,
+        masteryResponse,
         influence,
+        influenceResponse,
       },
     };
     
@@ -56,22 +60,30 @@ export default function ControlScreen() {
       if (dealError) {
         console.error('Error saving deal:', dealError);
       } else if (dealData) {
-        // Save assessment details
+        // Save assessment details with natural language responses
         const { error: assessmentError } = await supabase
           .from('rtw_assessments')
           .insert({
             deal_id: dealData.id,
             credibility_knowledge: updatedAnswers.credibility.knowledge,
+            credibility_knowledge_response: updatedAnswers.credibility.knowledgeResponse || null,
             credibility_trust: updatedAnswers.credibility.trust,
+            credibility_trust_response: updatedAnswers.credibility.trustResponse || null,
             credibility_gate_question: updatedAnswers.credibility.gateQuestion,
             capability_competence: updatedAnswers.capability.competence,
+            capability_competence_response: updatedAnswers.capability.competenceResponse || null,
             capability_quantum: updatedAnswers.capability.quantum,
+            capability_quantum_response: updatedAnswers.capability.quantumResponse || null,
             capability_gate_question: updatedAnswers.capability.gateQuestion,
             commitment_outcome: updatedAnswers.commitment.outcome,
+            commitment_outcome_response: updatedAnswers.commitment.outcomeResponse || null,
             commitment_satisfaction: updatedAnswers.commitment.satisfaction,
+            commitment_satisfaction_response: updatedAnswers.commitment.satisfactionResponse || null,
             commitment_gate_question: updatedAnswers.commitment.gateQuestion,
             control_mastery: updatedAnswers.control.mastery,
+            control_mastery_response: updatedAnswers.control.masteryResponse || null,
             control_influence: updatedAnswers.control.influence,
+            control_influence_response: updatedAnswers.control.influenceResponse || null,
             control_gate_question: updatedAnswers.control.gateQuestion,
             credibility_score: calculatedScores.credibility,
             capability_score: calculatedScores.capability,
@@ -153,12 +165,16 @@ export default function ControlScreen() {
             question="Mastery: Are our fingerprints unique to our organisation? Are we the best in the world at this?"
             value={mastery}
             onValueChange={setMastery}
+            textResponse={masteryResponse}
+            onTextResponseChange={setMasteryResponse}
           />
 
           <AssessmentQuestion
             question="Influence: Does the client value our mastery? Have we demonstrated benefits to their needs?"
             value={influence}
             onValueChange={setInfluence}
+            textResponse={influenceResponse}
+            onTextResponseChange={setInfluenceResponse}
           />
 
           <View style={styles.navigationButtons}>

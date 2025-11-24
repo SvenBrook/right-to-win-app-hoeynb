@@ -1,7 +1,7 @@
 
 import { useState, useCallback } from 'react';
 import { supabase } from '@/app/integrations/supabase/client';
-import { DealDetails, Scores } from '@/types/assessment';
+import { DealDetails, Scores, AssessmentAnswers } from '@/types/assessment';
 
 interface InsightsState {
   insights: string | null;
@@ -12,6 +12,7 @@ interface InsightsState {
 interface GenerateInsightsParams {
   dealDetails: DealDetails;
   scores: Scores;
+  answers: AssessmentAnswers;
 }
 
 export function useRTWInsights() {
@@ -21,7 +22,7 @@ export function useRTWInsights() {
     error: null,
   });
 
-  const generateInsights = useCallback(async ({ dealDetails, scores }: GenerateInsightsParams) => {
+  const generateInsights = useCallback(async ({ dealDetails, scores, answers }: GenerateInsightsParams) => {
     setState({ insights: null, loading: true, error: null });
 
     try {
@@ -33,6 +34,7 @@ export function useRTWInsights() {
         body: {
           dealDetails,
           scores,
+          answers,
         },
       });
 

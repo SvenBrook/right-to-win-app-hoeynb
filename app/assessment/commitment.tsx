@@ -10,7 +10,9 @@ export default function CommitmentScreen() {
   const { answers, setAnswers } = useAssessment();
   const [gateQuestion, setGateQuestion] = useState(answers.commitment.gateQuestion);
   const [outcome, setOutcome] = useState(answers.commitment.outcome);
+  const [outcomeResponse, setOutcomeResponse] = useState(answers.commitment.outcomeResponse || '');
   const [satisfaction, setSatisfaction] = useState(answers.commitment.satisfaction);
+  const [satisfactionResponse, setSatisfactionResponse] = useState(answers.commitment.satisfactionResponse || '');
 
   const handleNext = () => {
     setAnswers({
@@ -18,7 +20,9 @@ export default function CommitmentScreen() {
       commitment: {
         gateQuestion,
         outcome,
+        outcomeResponse,
         satisfaction,
+        satisfactionResponse,
       },
     });
     router.push('/assessment/control');
@@ -87,12 +91,16 @@ export default function CommitmentScreen() {
                 question="Outcome: Have we delivered to the contract? How would an audit score our delivery?"
                 value={outcome}
                 onValueChange={setOutcome}
+                textResponse={outcomeResponse}
+                onTextResponseChange={setOutcomeResponse}
               />
 
               <AssessmentQuestion
                 question="Satisfaction: Is the client satisfied with our organisation and delivery? Do they come to us first?"
                 value={satisfaction}
                 onValueChange={setSatisfaction}
+                textResponse={satisfactionResponse}
+                onTextResponseChange={setSatisfactionResponse}
               />
             </>
           )}

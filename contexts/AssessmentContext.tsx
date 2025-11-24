@@ -18,22 +18,30 @@ const initialAnswers: AssessmentAnswers = {
   credibility: {
     gateQuestion: false,
     knowledge: 5,
+    knowledgeResponse: '',
     trust: 5,
+    trustResponse: '',
   },
   capability: {
     gateQuestion: false,
     competence: 5,
+    competenceResponse: '',
     quantum: 5,
+    quantumResponse: '',
   },
   commitment: {
     gateQuestion: false,
     outcome: 5,
+    outcomeResponse: '',
     satisfaction: 5,
+    satisfactionResponse: '',
   },
   control: {
     gateQuestion: false,
     mastery: 5,
+    masteryResponse: '',
     influence: 5,
+    influenceResponse: '',
   },
 };
 

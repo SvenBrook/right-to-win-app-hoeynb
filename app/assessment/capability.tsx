@@ -10,7 +10,9 @@ export default function CapabilityScreen() {
   const { answers, setAnswers } = useAssessment();
   const [gateQuestion, setGateQuestion] = useState(answers.capability.gateQuestion);
   const [competence, setCompetence] = useState(answers.capability.competence);
+  const [competenceResponse, setCompetenceResponse] = useState(answers.capability.competenceResponse || '');
   const [quantum, setQuantum] = useState(answers.capability.quantum);
+  const [quantumResponse, setQuantumResponse] = useState(answers.capability.quantumResponse || '');
 
   const handleNext = () => {
     setAnswers({
@@ -18,7 +20,9 @@ export default function CapabilityScreen() {
       capability: {
         gateQuestion,
         competence,
+        competenceResponse,
         quantum,
+        quantumResponse,
       },
     });
     router.push('/assessment/commitment');
@@ -85,12 +89,16 @@ export default function CapabilityScreen() {
             question="Competence: Are we in the top 5% of suppliers? Have we demonstrated competence with relevant references?"
             value={competence}
             onValueChange={setCompetence}
+            textResponse={competenceResponse}
+            onTextResponseChange={setCompetenceResponse}
           />
 
           <AssessmentQuestion
             question="Quantum: How many times have we delivered this? Do we have current social proof?"
             value={quantum}
             onValueChange={setQuantum}
+            textResponse={quantumResponse}
+            onTextResponseChange={setQuantumResponse}
           />
 
           <View style={styles.navigationButtons}>

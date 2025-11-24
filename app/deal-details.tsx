@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Platform } from 'react-native';
 import { router } from 'expo-router';
 import { commonStyles, colors, buttonStyles } from '@/styles/commonStyles';
@@ -10,7 +10,12 @@ import { Picker } from '@react-native-picker/picker';
 export default function DealDetailsScreen() {
   const { dealDetails, setDealDetails } = useAssessment();
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [tempDate, setTempDate] = useState(new Date());
+  const [tempDate, setTempDate] = useState<Date>(() => {
+    if (dealDetails.expectedCloseDate) {
+      return new Date(dealDetails.expectedCloseDate);
+    }
+    return new Date();
+  });
 
   const salesStages = [
     'Prospecting',
@@ -20,6 +25,12 @@ export default function DealDetailsScreen() {
     'Negotiation',
     'Closing',
   ];
+
+  useEffect(() => {
+    if (dealDetails.expectedCloseDate) {
+      setTempDate(new Date(dealDetails.expectedCloseDate));
+    }
+  }, [dealDetails.expectedCloseDate]);
 
   const handleNext = () => {
     if (!dealDetails.clientName || !dealDetails.dealName) {
@@ -34,13 +45,32 @@ export default function DealDetailsScreen() {
       setShowDatePicker(false);
     }
     
+    if (event.type === 'dismissed') {
+      setShowDatePicker(false);
+      return;
+    }
+    
     if (selectedDate) {
       setTempDate(selectedDate);
       setDealDetails({
         ...dealDetails,
         expectedCloseDate: selectedDate.toISOString().split('T')[0],
       });
+      
+      if (Platform.OS === 'ios') {
+        setShowDatePicker(false);
+      }
     }
+  };
+
+  const formatDate = (dateString: string) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    });
   };
 
   return (
@@ -89,7 +119,7 @@ export default function DealDetailsScreen() {
             onPress={() => setShowDatePicker(true)}
           >
             <Text style={dealDetails.expectedCloseDate ? styles.dateText : styles.datePlaceholder}>
-              {dealDetails.expectedCloseDate || 'Select date'}
+              {dealDetails.expectedCloseDate ? formatDate(dealDetails.expectedCloseDate) : 'Select date'}
             </Text>
           </TouchableOpacity>
 
@@ -97,8 +127,9 @@ export default function DealDetailsScreen() {
             <DateTimePicker
               value={tempDate}
               mode="date"
-              display="default"
+              display={Platform.OS === 'ios' ? 'spinner' : 'default'}
               onChange={handleDateChange}
+              minimumDate={new Date()}
             />
           )}
 

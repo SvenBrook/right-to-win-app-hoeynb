@@ -32,8 +32,8 @@ export default function ResultsScreen() {
     try {
       console.log('Starting AI insights generation...');
 
-      // Generate insights using OpenAI
-      const insights = await generateInsights({ dealDetails, scores });
+      // Generate insights using OpenAI with natural language responses
+      const insights = await generateInsights({ dealDetails, scores, answers });
 
       if (!insights) {
         Alert.alert(
@@ -75,7 +75,7 @@ export default function ResultsScreen() {
         .insert({
           client_name: dealDetails.clientName,
           deal_name: dealDetails.dealName,
-          deal_value: dealDetails.dealValue ? parseFloat(dealDetails.dealValue) : null,
+          deal_value: dealDetails.dealValue ? parseFloat(dealDetails.dealValue.replace(/[^0-9.-]+/g, '')) : null,
           expected_close_date: dealDetails.expectedCloseDate || null,
           sales_stage: dealDetails.salesStage || null,
           deal_context: dealDetails.dealContext || null,
@@ -95,22 +95,30 @@ export default function ResultsScreen() {
 
       console.log('Deal saved successfully:', dealData.id);
 
-      // Then, create the assessment
+      // Then, create the assessment with natural language responses
       const { data: assessmentData, error: assessmentError } = await supabase
         .from('rtw_assessments')
         .insert({
           deal_id: dealData.id,
           credibility_knowledge: answers.credibility.knowledge,
+          credibility_knowledge_response: answers.credibility.knowledgeResponse || null,
           credibility_trust: answers.credibility.trust,
+          credibility_trust_response: answers.credibility.trustResponse || null,
           credibility_gate_question: answers.credibility.gateQuestion,
           capability_competence: answers.capability.competence,
+          capability_competence_response: answers.capability.competenceResponse || null,
           capability_quantum: answers.capability.quantum,
+          capability_quantum_response: answers.capability.quantumResponse || null,
           capability_gate_question: answers.capability.gateQuestion,
           commitment_outcome: answers.commitment.outcome,
+          commitment_outcome_response: answers.commitment.outcomeResponse || null,
           commitment_satisfaction: answers.commitment.satisfaction,
+          commitment_satisfaction_response: answers.commitment.satisfactionResponse || null,
           commitment_gate_question: answers.commitment.gateQuestion,
           control_mastery: answers.control.mastery,
+          control_mastery_response: answers.control.masteryResponse || null,
           control_influence: answers.control.influence,
+          control_influence_response: answers.control.influenceResponse || null,
           control_gate_question: answers.control.gateQuestion,
           credibility_score: scores.credibility,
           capability_score: scores.capability,
@@ -276,7 +284,7 @@ export default function ResultsScreen() {
         <View style={styles.actionContainer}>
           <Text style={styles.actionTitle}>Get AI-Powered Insights</Text>
           <Text style={styles.actionDescription}>
-            Generate personalized recommendations based on your assessment using OpenAI&apos;s advanced AI.
+            Generate personalised recommendations based on your assessment using OpenAI&apos;s advanced AI.
           </Text>
           
           <TouchableOpacity
