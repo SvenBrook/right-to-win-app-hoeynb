@@ -174,7 +174,7 @@ export default function ResultsScreen() {
       console.log('Email sent successfully to:', data.recipients);
       Alert.alert(
         'Success',
-        `Results have been emailed to ${dealDetails.email} and Sven@ImpactWon.com`,
+        `Results have been emailed to ${dealDetails.email}`,
         [{ text: 'OK' }]
       );
     } catch (error) {
@@ -330,7 +330,7 @@ export default function ResultsScreen() {
         <View style={styles.actionContainer}>
           <Text style={styles.actionTitle}>Get AI-Powered Insights</Text>
           <Text style={styles.actionDescription}>
-            Generate personalised recommendations and email results to {dealDetails.email} and Sven@ImpactWon.com
+            Generate personalised recommendations and email results to {dealDetails.email}
           </Text>
           
           <TouchableOpacity
